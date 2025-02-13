@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Géneros - CineSys</title>
+    <!-- Favicon -->
+    <link rel="icon" href="img/favicon.png" type="image/png">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Bootstrap Icons CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-film"></i> CineSys
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="generos.html"><i class="bi bi-list"></i> Géneros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="peliculas.html"><i class="bi bi-film"></i> Películas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="directores.html"><i class="bi bi-person"></i> Directores</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="protagonistas.html"><i class="bi bi-people"></i> Protagonistas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="paises.html"><i class="bi bi-flag"></i> Países</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="asistentes.html"><i class="fas fa-bell"></i> Notificaciones</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h2>Gestión de Géneros</h2>
+        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#generoModal">
+            <i class="bi bi-plus-circle"></i> Nuevo Género
+        </button>
+
+        <table id="tableGeneros" class="display">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal para Crear/Editar -->
+    <div class="modal fade" id="generoModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Género</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="generoForm">
+                        <input type="hidden" id="generoId">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="descripcion" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardarGenero()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+
+    <script>
+        let table;
+        let generos = JSON.parse(localStorage.getItem('generos')) || [];
+
+        $(document).ready(function() {
+            table = $('#tableGeneros').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+                },
+                data: generos,
+                columns: [
+                    { data: 'id' },
+                    { data: 'nombre' },
+                    { data: 'descripcion' },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            return `
+                                <button class="btn btn-sm btn-warning" onclick="editarGenero(${row.id})"><i class="bi bi-pencil"></i> Editar</button>
+                                <button class="btn btn-sm btn-danger" onclick="eliminarGenero(${row.id})"><i class="bi bi-trash"></i> Eliminar</button>
+                            `;
+                        }
+                    }
+                ]
+            });
+        });
+
+        function guardarGenero() {
+            const id = document.getElementById('generoId').value;
+            const genero = {
+                id: id ? parseInt(id) : Date.now(),
+                nombre: document.getElementById('nombre').value,
+                descripcion: document.getElementById('descripcion').value
+            };
+
+            if (id) {
+                const index = generos.findIndex(g => g.id === parseInt(id));
+                generos[index] = genero;
+            } else {
+                generos.push(genero);
+            }
+
+            localStorage.setItem('generos', JSON.stringify(generos));
+            table.clear().rows.add(generos).draw();
+            
+            $('#generoModal').modal('hide');
+            iziToast.success({
+                title: 'Éxito',
+                message: 'Género guardado correctamente',
+                position: 'topRight'
+            });
+        }
+
+        function editarGenero(id) {
+            const genero = generos.find(g => g.id === id);
+            document.getElementById('generoId').value = genero.id;
+            document.getElementById('nombre').value = genero.nombre;
+            document.getElementById('descripcion').value = genero.descripcion;
+            $('#generoModal').modal('show');
+        }
+
+        function eliminarGenero(id) {
+            if (confirm('¿Está seguro de eliminar este género?')) {
+                generos = generos.filter(g => g.id !== id);
+                localStorage.setItem('generos', JSON.stringify(generos));
+                table.clear().rows.add(generos).draw();
+                
+                iziToast.success({
+                    title: 'Éxito',
+                    message: 'Género eliminado correctamente',
+                    position: 'topRight'
+                });
+            }
+        }
+
+        $('#generoModal').on('hidden.bs.modal', function () {
+            document.getElementById('generoForm').reset();
+            document.getElementById('generoId').value = '';
+        });
+    </script>
+</body>
+</html>

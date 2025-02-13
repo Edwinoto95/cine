@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Películas - CineSys</title>
+    <!-- Favicon -->
+    <link rel="icon" href="img/favicon.png" type="image/png">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Bootstrap Icons CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-film"></i> CineSys
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="generos.html"><i class="bi bi-list"></i> Géneros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="peliculas.html"><i class="bi bi-film"></i> Películas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="directores.html"><i class="bi bi-person"></i> Directores</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="protagonistas.html"><i class="bi bi-people"></i> Protagonistas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="paises.html"><i class="bi bi-flag"></i> Países</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="asistentes.html"><i class="fas fa-bell"></i> Notificaciones</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h2>Gestión de Películas</h2>
+        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#peliculaModal">
+            Nueva Película
+        </button>
+
+        <!-- Botones de descarga -->
+        <div>
+            <button class="btn btn-secondary mb-3" onclick="descargarPDF()">Descargar PDF</button>
+            <button class="btn btn-success mb-3" onclick="descargarExcel()">Descargar Excel</button>
+        </div>
+
+        <table id="tablePeliculas" class="display">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Género</th>
+                    <th>Director</th>
+                    <th>Protagonista</th>
+                    <th>País</th>
+                    <th>Año</th>
+                    <th>Póster</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal para Crear/Editar -->
+    <div class="modal fade" id="peliculaModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Película</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="peliculaForm">
+                        <input type="hidden" id="peliculaId">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="titulo" class="form-label">Título</label>
+                                <input type="text" class="form-control" id="titulo" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="genero" class="form-label">Género</label>
+                                <select class="form-control" id="genero" required>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="director" class="form-label">Director</label>
+                                <select class="form-control" id="director" required>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="protagonista" class="form-label">Protagonista</label>
+                                <select class="form-control" id="protagonista" required>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="pais" class="form-label">País</label>
+                                <select class="form-control" id="pais" required>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="anio" class="form-label">Año</label>
+                                <input type="number" class="form-control" id="anio" required min="1900" max="2099">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="sinopsis" class="form-label">Sinopsis</label>
+                            <textarea class="form-control" id="sinopsis" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="poster" class="form-label">Póster</label>
+                            <input type="file" class="form-control" id="poster" accept="image/*">
+                            <div id="posterPreview" class="mt-2"></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardarPelicula()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+    <!-- jsPDF library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <!-- XLSX library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.min.js"></script>
+
+    <script>
+        let table;
+        let peliculas = JSON.parse(localStorage.getItem('peliculas')) || [];
+        const generos = JSON.parse(localStorage.getItem('generos')) || [];
+        const directores = JSON.parse(localStorage.getItem('directores')) || [];
+        const protagonistas = JSON.parse(localStorage.getItem('protagonistas')) || [];
+        const paises = JSON.parse(localStorage.getItem('paises')) || [];
+
+        $(document).ready(function() {
+            cargarSelects();
+            
+            table = $('#tablePeliculas').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+                },
+                data: peliculas,
+                columns: [
+                    { data: 'id' },
+                    { data: 'titulo' },
+                    { data: 'genero' },
+                    { data: 'director' },
+                    { data: 'protagonista' },
+                    { data: 'pais' },
+                    { data: 'anio' },
+                    { 
+                        data: 'poster',
+                        render: function(data) {
+                            return data ? `<img src="${data}" height="50">` : 'Sin póster';
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            return `
+                                <button class="btn btn-sm btn-warning" onclick="editarPelicula(${row.id})">Editar</button>
+                                <button class="btn btn-sm btn-danger" onclick="eliminarPelicula(${row.id})">Eliminar</button>
+                            `;
+                        }
+                    }
+                ]
+            });
+        });
+
+        function cargarSelects() {
+            // Cargar géneros
+            const generoSelect = document.getElementById('genero');
+            generoSelect.innerHTML = '<option value="">Seleccione un género</option>';
+            generos.forEach(genero => {
+                generoSelect.innerHTML += `<option value="${genero.nombre}">${genero.nombre}</option>`;
+            });
+
+            // Cargar directores
+            const directorSelect = document.getElementById('director');
+            directorSelect.innerHTML = '<option value="">Seleccione un director</option>';
+            directores.forEach(director => {
+                directorSelect.innerHTML += `<option value="${director.nombre}">${director.nombre}</option>`;
+            });
+
+            // Cargar protagonistas
+            const protagonistaSelect = document.getElementById('protagonista');
+            protagonistaSelect.innerHTML = '<option value="">Seleccione un protagonista</option>';
+            protagonistas.forEach(protagonista => {
+                protagonistaSelect.innerHTML += `<option value="${protagonista.nombre}">${protagonista.nombre}</option>`;
+            });
+
+            // Cargar países
+            const paisSelect = document.getElementById('pais');
+            paisSelect.innerHTML = '<option value="">Seleccione un país</option>';
+            paises.forEach(pais => {
+                paisSelect.innerHTML += `<option value="${pais.nombre}">${pais.nombre}</option>`;
+            });
+        }
+
+        function convertirImagenABase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        async function guardarPelicula() {
+            const id = document.getElementById('peliculaId').value;
+            const posterFile = document.getElementById('poster').files[0];
+            let posterBase64 = null;
+
+            if (posterFile) {
+                posterBase64 = await convertirImagenABase64(posterFile);
+            } else if (id) {
+                const peliculaExistente = peliculas.find(p => p.id === parseInt(id));
+                posterBase64 = peliculaExistente.poster;
+            }
+
+            const pelicula = {
+                id: id ? parseInt(id) : Date.now(),
+                titulo: document.getElementById('titulo').value,
+                genero: document.getElementById('genero').value,
+                director: document.getElementById('director').value,
+                protagonista: document.getElementById('protagonista').value,
+                pais: document.getElementById('pais').value,
+                anio: document.getElementById('anio').value,
+                sinopsis: document.getElementById('sinopsis').value,
+                poster: posterBase64
+            };
+
+            if (id) {
+                const index = peliculas.findIndex(p => p.id === parseInt(id));
+                peliculas[index] = pelicula;
+            } else {
+                peliculas.push(pelicula);
+            }
+
+            localStorage.setItem('peliculas', JSON.stringify(peliculas));
+            table.clear().rows.add(peliculas).draw();
+            
+            $('#peliculaModal').modal('hide');
+            iziToast.success({
+                title: 'Éxito',
+                message: 'Película guardada correctamente',
+                position: 'topRight'
+            });
+        }
+
+        function editarPelicula(id) {
+            const pelicula = peliculas.find(p => p.id === id);
+            document.getElementById('peliculaId').value = pelicula.id;
+            document.getElementById('titulo').value = pelicula.titulo;
+            document.getElementById('genero').value = pelicula.genero;
+            document.getElementById('director').value = pelicula.director;
+            document.getElementById('protagonista').value = pelicula.protagonista;
+            document.getElementById('pais').value = pelicula.pais;
+            document.getElementById('anio').value = pelicula.anio;
+            document.getElementById('sinopsis').value = pelicula.sinopsis;
+            
+            const posterPreview = document.getElementById('posterPreview');
+            if (pelicula.poster) {
+                posterPreview.innerHTML = `<img src="${pelicula.poster}" height="100">`;
+            } else {
+                posterPreview.innerHTML = '';
+            }
+            
+            $('#peliculaModal').modal('show');
+        }
+
+        function eliminarPelicula(id) {
+            if (confirm('¿Está seguro de eliminar esta película?')) {
+                peliculas = peliculas.filter(p => p.id !== id);
+                localStorage.setItem('peliculas', JSON.stringify(peliculas));
+                table.clear().rows.add(peliculas).draw();
+                
+                iziToast.success({
+                    title: 'Éxito',
+                    message: 'Película eliminada correctamente',
+                    position: 'topRight'
+                });
+            }
+        }
+
+        document.getElementById('poster').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('posterPreview').innerHTML = 
+                        `<img src="${e.target.result}" height="100">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        $('#peliculaModal').on('hidden.bs.modal', function () {
+            document.getElementById('peliculaForm').reset();
+            document.getElementById('peliculaId').value = '';
+            document.getElementById('posterPreview').innerHTML = '';
+        });
+
+        // Función para descargar la tabla como PDF
+        function descargarPDF() {
+            // Configuración de jsPDF
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+            
+            pdf.text("Lista de Películas", 10, 10);
+
+            let y = 20;
+            peliculas.forEach(pelicula => {
+                pdf.text(`${pelicula.titulo} (${pelicula.anio})`, 10, y);
+                y += 10;
+            });
+
+            pdf.save('peliculas.pdf');
+        }
+
+        // Función para descargar la tabla como Excel
+        function descargarExcel() {
+            // Crear un nuevo libro de Excel
+            const wb = XLSX.utils.book_new();
+
+            // Convertir los datos de la tabla a una hoja de cálculo
+            const ws = XLSX.utils.json_to_sheet(peliculas);
+
+            // Añadir la hoja de cálculo al libro
+            XLSX.utils.book_append_sheet(wb, ws, "Peliculas");
+
+            // Descargar el archivo Excel
+            XLSX.writeFile(wb, 'peliculas.xlsx');
+        }
+    </script>
+</body>
+</html>

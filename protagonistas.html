@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Protagonistas - CineSys</title>
+    <!-- Favicon -->
+    <link rel="icon" href="img/favicon.png" type="image/png">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Bootstrap Icons CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-film"></i> CineSys
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="generos.html"><i class="bi bi-list"></i> Géneros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="peliculas.html"><i class="bi bi-film"></i> Películas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="directores.html"><i class="bi bi-person"></i> Directores</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="protagonistas.html"><i class="bi bi-people"></i> Protagonistas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="paises.html"><i class="bi bi-flag"></i> Países</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="asistentes.html"><i class="fas fa-bell"></i> Notificaciones</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h2>Gestión de Protagonistas</h2>
+        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#protagonistaModal">
+            <i class="bi bi-plus-circle"></i> Nuevo Protagonista
+        </button>
+
+        <table id="tableProtagonistas" class="display">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>País de Origen</th>
+                    <th>Fecha de Nacimiento</th>
+                    <th>Fotografía</th>
+                    <th>Películas Destacadas</th>
+                    <th>Premios</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal para Crear/Editar -->
+    <div class="modal fade" id="protagonistaModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Protagonista</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="protagonistaForm">
+                        <input type="hidden" id="protagonistaId">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre Completo</label>
+                            <input type="text" class="form-control" id="nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="paisOrigen" class="form-label">País de Origen</label>
+                            <select class="form-control" id="paisOrigen" required>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fechaNacimiento" class="form-label">Fecha de Nacimiento</label>
+                            <input type="date" class="form-control" id="fechaNacimiento" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="peliculasDestacadas" class="form-label">Películas Destacadas</label>
+                            <textarea class="form-control" id="peliculasDestacadas" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="premios" class="form-label">Premios</label>
+                            <textarea class="form-control" id="premios" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="biografia" class="form-label">Biografía</label>
+                            <textarea class="form-control" id="biografia" rows="4"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="foto" class="form-label">Fotografía</label>
+                            <input type="file" class="form-control" id="foto" accept="image/*">
+                            <div id="fotoPreview" class="mt-2"></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardarProtagonista()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+
+    <script>
+        let table;
+        let protagonistas = JSON.parse(localStorage.getItem('protagonistas')) || [];
+        const paises = JSON.parse(localStorage.getItem('paises')) || [];
+
+        $(document).ready(function() {
+            cargarPaises();
+
+            table = $('#tableProtagonistas').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+                },
+                data: protagonistas,
+                columns: [{
+                        data: 'id'
+                    },
+                    {
+                        data: 'nombre'
+                    },
+                    {
+                        data: 'paisOrigen'
+                    },
+                    {
+                        data: 'fechaNacimiento'
+                    },
+                    {
+                        data: 'foto',
+                        render: function(data) {
+                            return data ? `<img src="${data}" height="50">` : 'Sin foto';
+                        }
+                    },
+                    {
+                        data: 'peliculasDestacadas'
+                    },
+                    {
+                        data: 'premios'
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            return `
+                                <button class="btn btn-sm btn-warning" onclick="editarProtagonista(${row.id})"><i class="bi bi-pencil"></i> Editar</button>
+                                <button class="btn btn-sm btn-danger" onclick="eliminarProtagonista(${row.id})"><i class="bi bi-trash"></i> Eliminar</button>
+                            `;
+                        }
+                    }
+                ]
+            });
+        });
+
+        function cargarPaises() {
+            const paisSelect = document.getElementById('paisOrigen');
+            paisSelect.innerHTML = '<option value="">Seleccione un país</option>';
+            paises.forEach(pais => {
+                paisSelect.innerHTML += `<option value="${pais.nombre}">${pais.nombre}</option>`;
+            });
+        }
+
+        function convertirImagenABase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        async function guardarProtagonista() {
+            const id = document.getElementById('protagonistaId').value;
+            const fotoFile = document.getElementById('foto').files[0];
+            let fotoBase64 = null;
+
+            if (fotoFile) {
+                fotoBase64 = await convertirImagenABase64(fotoFile);
+            } else if (id) {
+                const protagonistaExistente = protagonistas.find(p => p.id === parseInt(id));
+                fotoBase64 = protagonistaExistente.foto;
+            }
+
+            const protagonista = {
+                id: id ? parseInt(id) : Date.now(),
+                nombre: document.getElementById('nombre').value,
+                paisOrigen: document.getElementById('paisOrigen').value,
+                fechaNacimiento: document.getElementById('fechaNacimiento').value,
+                peliculasDestacadas: document.getElementById('peliculasDestacadas').value,
+                premios: document.getElementById('premios').value,
+                biografia: document.getElementById('biografia').value,
+                foto: fotoBase64
+            };
+
+            if (id) {
+                const index = protagonistas.findIndex(p => p.id === parseInt(id));
+                protagonistas[index] = protagonista;
+            } else {
+                protagonistas.push(protagonista);
+            }
+
+            localStorage.setItem('protagonistas', JSON.stringify(protagonistas));
+            table.clear().rows.add(protagonistas).draw();
+
+            $('#protagonistaModal').modal('hide');
+            iziToast.success({
+                title: 'Éxito',
+                message: 'Protagonista guardado correctamente',
+                position: 'topRight'
+            });
+        }
+
+        function editarProtagonista(id) {
+            const protagonista = protagonistas.find(p => p.id === id);
+            document.getElementById('protagonistaId').value = protagonista.id;
+            document.getElementById('nombre').value = protagonista.nombre;
+            document.getElementById('paisOrigen').value = protagonista.paisOrigen;
+            document.getElementById('fechaNacimiento').value = protagonista.fechaNacimiento;
+            document.getElementById('peliculasDestacadas').value = protagonista.peliculasDestacadas;
+            document.getElementById('premios').value = protagonista.premios;
+            document.getElementById('biografia').value = protagonista.biografia;
+
+            const fotoPreview = document.getElementById('fotoPreview');
+            if (protagonista.foto) {
+                fotoPreview.innerHTML = `<img src="${protagonista.foto}" height="100">`;
+            } else {
+                fotoPreview.innerHTML = '';
+            }
+
+            $('#protagonistaModal').modal('show');
+        }
+
+        function eliminarProtagonista(id) {
+            if (confirm('¿Está seguro de eliminar este protagonista?')) {
+                protagonistas = protagonistas.filter(p => p.id !== id);
+                localStorage.setItem('protagonistas', JSON.stringify(protagonistas));
+                table.clear().rows.add(protagonistas).draw();
+
+                iziToast.success({
+                    title: 'Éxito',
+                    message: 'Protagonista eliminado correctamente',
+                    position: 'topRight'
+                });
+            }
+        }
+
+        document.getElementById('foto').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('fotoPreview').innerHTML =
+                        `<img src="${e.target.result}" height="100">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        $('#protagonistaModal').on('hidden.bs.modal', function () {
+            document.getElementById('protagonistaForm').reset();
+            document.getElementById('protagonistaId').value = '';
+            document.getElementById('fotoPreview').innerHTML = '';
+        });
+    </script>
+</body>
+
+</html>

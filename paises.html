@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Países - CineSys</title>
+    <!-- Favicon -->
+    <link rel="icon" href="img/favicon.png" type="image/png">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Bootstrap Icons CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-film"></i> CineSys
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="generos.html"><i class="bi bi-list"></i> Géneros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="peliculas.html"><i class="bi bi-film"></i> Películas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="directores.html"><i class="bi bi-person"></i> Directores</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="protagonistas.html"><i class="bi bi-people"></i> Protagonistas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="paises.html"><i class="bi bi-flag"></i> Países</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="asistentes.html"><i class="fas fa-bell"></i> Notificaciones</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h2>Gestión de Países</h2>
+        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#paisModal">
+            <i class="bi bi-plus-circle"></i> Nuevo País
+        </button>
+
+        <table id="tablePaises" class="display">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Código</th>
+                    <th>Región</th>
+                    <th>Bandera</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal para Crear/Editar -->
+    <div class="modal fade" id="paisModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">País</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="paisForm">
+                        <input type="hidden" id="paisId">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre del País</label>
+                            <input type="text" class="form-control" id="nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="codigo" class="form-label">Código del País</label>
+                            <input type="text" class="form-control" id="codigo" maxlength="3" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="region" class="form-label">Región</label>
+                            <select class="form-control" id="region" required>
+                                <option value="">Seleccione una región</option>
+                                <option value="América del Norte">América del Norte</option>
+                                <option value="América Central">América Central</option>
+                                <option value="América del Sur">América del Sur</option>
+                                <option value="Europa">Europa</option>
+                                <option value="Asia">Asia</option>
+                                <option value="África">África</option>
+                                <option value="Oceanía">Oceanía</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="bandera" class="form-label">Bandera</label>
+                            <input type="file" class="form-control" id="bandera" accept="image/*">
+                            <div id="banderaPreview" class="mt-2"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="descripcion" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardarPais()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+
+    <script>
+        let table;
+        let paises = JSON.parse(localStorage.getItem('paises')) || [];
+
+        $(document).ready(function () {
+            table = $('#tablePaises').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+                },
+                data: paises,
+                columns: [{
+                        data: 'id'
+                    },
+                    {
+                        data: 'nombre'
+                    },
+                    {
+                        data: 'codigo'
+                    },
+                    {
+                        data: 'region'
+                    },
+                    {
+                        data: 'bandera',
+                        render: function (data) {
+                            return data ? `<img src="${data}" height="30">` : 'Sin bandera';
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            return `
+                                <button class="btn btn-sm btn-warning" onclick="editarPais(${row.id})"><i class="bi bi-pencil"></i> Editar</button>
+                                <button class="btn btn-sm btn-danger" onclick="eliminarPais(${row.id})"><i class="bi bi-trash"></i> Eliminar</button>
+                            `;
+                        }
+                    }
+                ]
+            });
+        });
+
+        function convertirImagenABase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        async function guardarPais() {
+            const id = document.getElementById('paisId').value;
+            const banderaFile = document.getElementById('bandera').files[0];
+            let banderaBase64 = null;
+
+            if (banderaFile) {
+                banderaBase64 = await convertirImagenABase64(banderaFile);
+            } else if (id) {
+                const paisExistente = paises.find(p => p.id === parseInt(id));
+                banderaBase64 = paisExistente.bandera;
+            }
+
+            const pais = {
+                id: id ? parseInt(id) : Date.now(),
+                nombre: document.getElementById('nombre').value,
+                codigo: document.getElementById('codigo').value.toUpperCase(),
+                region: document.getElementById('region').value,
+                descripcion: document.getElementById('descripcion').value,
+                bandera: banderaBase64
+            };
+
+            if (id) {
+                const index = paises.findIndex(p => p.id === parseInt(id));
+                paises[index] = pais;
+            } else {
+                paises.push(pais);
+            }
+
+            localStorage.setItem('paises', JSON.stringify(paises));
+            table.clear().rows.add(paises).draw();
+
+            $('#paisModal').modal('hide');
+            iziToast.success({
+                title: 'Éxito',
+                message: 'País guardado correctamente',
+                position: 'topRight'
+            });
+        }
+
+        function editarPais(id) {
+            const pais = paises.find(p => p.id === id);
+            document.getElementById('paisId').value = pais.id;
+            document.getElementById('nombre').value = pais.nombre;
+            document.getElementById('codigo').value = pais.codigo;
+            document.getElementById('region').value = pais.region;
+            document.getElementById('descripcion').value = pais.descripcion;
+
+            const banderaPreview = document.getElementById('banderaPreview');
+            if (pais.bandera) {
+                banderaPreview.innerHTML = `<img src="${pais.bandera}" height="100">`;
+            } else {
+                banderaPreview.innerHTML = '';
+            }
+
+            $('#paisModal').modal('show');
+        }
+
+        function eliminarPais(id) {
+            if (confirm('¿Está seguro de eliminar este país?')) {
+                paises = paises.filter(p => p.id !== id);
+                localStorage.setItem('paises', JSON.stringify(paises));
+                table.clear().rows.add(paises).draw();
+
+                iziToast.success({
+                    title: 'Éxito',
+                    message: 'País eliminado correctamente',
+                    position: 'topRight'
+                });
+            }
+        }
+
+        document.getElementById('bandera').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('banderaPreview').innerHTML =
+                        `<img src="${e.target.result}" height="100">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        $('#paisModal').on('hidden.bs.modal', function () {
+            document.getElementById('paisForm').reset();
+            document.getElementById('paisId').value = '';
+            document.getElementById('banderaPreview').innerHTML = '';
+        });
+    </script>
+</body>
+
+</html>
